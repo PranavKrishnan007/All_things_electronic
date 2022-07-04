@@ -24,7 +24,7 @@ void loop()
   LDR=map(analogRead(A1),0,1023,0,255);
   if (BTSerial.listen()>0)//where value == the value we get in adjusting LDR
   {
-    if(LDR >= 100){
+    if(LDR >= 100 && BTSerial.listen() >= 0){
       if(light == 0){
         Serial.println("WELCOME.....THE LIGHTS ARE TURNED ON");
         BTSerial.write("WELCOME.....THE LIGHTS ARE TURNED ON");
@@ -34,47 +34,47 @@ void loop()
       }
     }
     else
-    // if(light == 0){
-    //   Serial.println("WELCOME.....THE LIGHTS ARE TURNED ON");
-    //   BTSerial.write("WELCOME.....THE LIGHTS ARE TURNED ON");
-    //   digitalWrite(13,HIGH);//Yellow light
-    //   digitalWrite(12,HIGH);//Red light
-    //   light = 1;
-    // }
-    // //digitalWrite(11,HIGH); 
-    // if (BTSerial.available()>0){
-    //   bluetooth=BTSerial.read();
-    //   if (bluetooth=='o')
-    //   {
-    //     for(int rotate=0;rotate<=180;rotate++)
-    //     {
-    //       myservo.write(rotate);
-    //     }
-    //     Serial.println("The Door is Opened");
-    //     BTSerial.println("The Door is Opened");
-    //   }
-    //   else if(bluetooth=='f')
-    //   {
-    //     for(int rotate=180;rotate>=0;rotate--)
-    //     {
-    //       myservo.write(rotate);
-    //     }
-    //     Serial.println("The Door is closed");
-    //     BTSerial.println("The Door is closed");
-    //   }
-    //   else if (bluetooth=='O')
-    //   {
-    //     digitalWrite(12,HIGH);
-    //     digitalWrite(13,LOW);
-    //     printf("The Red Light is on");
-    //   }
-    //   else if(bluetooth=='F')
-    //   {
-    //     digitalWrite(13,HIGH);
-    //     digitalWrite(12,LOW);
-    //     BTSerial.println("The Yellow Light is on");
-    //     Serial.println("The Yellow light is on:");
-    //   }
-    // }
+    if(light == 0){
+      Serial.println("WELCOME.....THE LIGHTS ARE TURNED ON");
+      BTSerial.write("WELCOME.....THE LIGHTS ARE TURNED ON");
+      digitalWrite(13,HIGH);//Yellow light
+      digitalWrite(12,HIGH);//Red light
+      light = 1;
+    }
+    //digitalWrite(11,HIGH); 
+    if (BTSerial.available()>0){
+      bluetooth=BTSerial.read();
+      if (bluetooth=='o')
+      {
+        for(int rotate=0;rotate<=180;rotate++)
+        {
+          myservo.write(rotate);
+        }
+        Serial.println("The Door is Opened");
+        BTSerial.println("The Door is Opened");
+      }
+      else if(bluetooth=='f')
+      {
+        for(int rotate=180;rotate>=0;rotate--)
+        {
+          myservo.write(rotate);
+        }
+        Serial.println("The Door is closed");
+        BTSerial.println("The Door is closed");
+      }
+      else if (bluetooth=='O')
+      {
+        digitalWrite(12,HIGH);
+        digitalWrite(13,LOW);
+        printf("The Red Light is on");
+      }
+      else if(bluetooth=='F')
+      {
+        digitalWrite(13,HIGH);
+        digitalWrite(12,LOW);
+        BTSerial.println("The Yellow Light is on");
+        Serial.println("The Yellow light is on:");
+      }
+    }
   }
 }
