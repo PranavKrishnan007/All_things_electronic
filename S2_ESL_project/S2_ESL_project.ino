@@ -12,9 +12,9 @@ void setup()
   myservo.attach(2);
   BTSerial.begin(9600);
   Serial.begin(9600);
+  pinMode(A1, INPUT);
   pinMode(13,OUTPUT);//Yellow Light
-  pinMode(12,OUTPUT);//Green light
-  pinMode(11,OUTPUT);
+  pinMode(12,OUTPUT);//red light
 }
 
 int door = 0, light = 0;
@@ -24,57 +24,55 @@ void loop()
   LDR=map(analogRead(A1),0,1023,0,255);
   if (BTSerial.listen()>0)//where value == the value we get in adjusting LDR
   {
-    if(LDR >= 100 && BTSerial.listen() >= 0){
-      if(light == 0){
-        Serial.println("WELCOME.....THE LIGHTS ARE TURNED ON");
-        BTSerial.write("WELCOME.....THE LIGHTS ARE TURNED ON");
-        digitalWrite(13,HIGH);//Yellow light
-        digitalWrite(12,HIGH);//Red light
-        light = 1;
-      }
-    }
-    else
-    if(light == 0){
-      Serial.println("WELCOME.....THE LIGHTS ARE TURNED ON");
-      BTSerial.write("WELCOME.....THE LIGHTS ARE TURNED ON");
-      digitalWrite(13,HIGH);//Yellow light
-      digitalWrite(12,HIGH);//Red light
-      light = 1;
-    }
-    //digitalWrite(11,HIGH); 
-    if (BTSerial.available()>0){
-      bluetooth=BTSerial.read();
+// -------------------- door rotation -----------------------
+    if(BTSerial.available()>=0 && LDR <= 100){
+      bluetooth = BTSerial.read();
       if (bluetooth=='o')
       {
-        for(int rotate=0;rotate<=180;rotate++)
-        {
-          myservo.write(rotate);
-        }
+        myservo.write(180);
         Serial.println("The Door is Opened");
         BTSerial.println("The Door is Opened");
       }
-      else if(bluetooth=='f')
+      else if(bluetooth=='c')
       {
-        for(int rotate=180;rotate>=0;rotate--)
-        {
-          myservo.write(rotate);
-        }
+        myservo.write(0);
         Serial.println("The Door is closed");
         BTSerial.println("The Door is closed");
       }
-      else if (bluetooth=='O')
-      {
-        digitalWrite(12,HIGH);
-        digitalWrite(13,LOW);
-        printf("The Red Light is on");
+      if(bluetooth == 'F'){
+        digitalWrite(12, LOW);
+        digitalWrite(13, LOW);
+        Serial.println("Lights are OFF");
+        BTSerial.write("Lights are OFF");
       }
-      else if(bluetooth=='F')
-      {
-        digitalWrite(13,HIGH);
-        digitalWrite(12,LOW);
-        BTSerial.println("The Yellow Light is on");
-        Serial.println("The Yellow light is on:");
+      else if(bluetooth == 'O'){
+        digitalWrite(12, HIGH);
+        digitalWrite(13, HIGH);
+        Serial.println("Lights are ON");
+        BTSerial.write("Lights are ON");
       }
+    }
+    else if(BTSerial.available()>= 0 && LDR >= 100){
+      bluetooth = BTSerial.read();
+      if (bluetooth=='o')
+      {
+        myservo.write(180);
+        Serial.println("The Door is Opened");
+        BTSerial.println("The Door is Opened");
+      }
+      else if(bluetooth=='c')
+      {
+        myservo.write(0);
+        Serial.println("The Door is closed");
+        BTSerial.println("The Door is closed");
+      }
+    }
+    else if (BTSerial.available()>= 0 && (BTSerial.read()=='W')){
+      myservo.write(0);
+      Serial.println("Intruder mode! calling the authorities.");
+      BTSerial.write("Intruder mode! calling the authorities.");
+      digitalWrite(12, LOW);
+      digitalWrite(13, LOW);
     }
   }
 }
